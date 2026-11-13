@@ -1,1 +1,793 @@
-# login
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Masuk - Sitenexs</title>
+    <meta name="description" content="Halaman login untuk akun Sitenexs." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            color-scheme: light;
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --bg-body: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-light: #e2e8f0;
+            --border-focus: rgba(59, 130, 246, 0.2);
+            --shadow-card: 0 28px 70px -32px rgba(15, 23, 42, 0.24), 0 12px 28px -16px rgba(15, 23, 42, 0.14), 0 0 0 1px rgba(255, 255, 255, 0.8);
+            --radius-sm: 0.65rem;
+            --radius-md: 1.25rem;
+        }
+
+        * { box-sizing: border-box; }
+
+        html { min-width: 320px; }
+
+        body {
+            position: relative;
+            isolation: isolate;
+            min-height: 100vh;
+            min-height: 100svh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            margin: 0;
+            background-color: var(--bg-body);
+            background-image: radial-gradient(circle, #cbd5e1 1px, transparent 1px);
+            background-size: 24px 24px;
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
+        }
+
+        .bg-glow-container {
+            position: fixed;
+            z-index: -1;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .glow-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: 0.45;
+        }
+
+        .glow-1 {
+            top: 10%;
+            left: 15%;
+            width: min(400px, 70vw);
+            height: min(400px, 70vw);
+            background: #2563eb;
+        }
+
+        .glow-2 {
+            right: 15%;
+            bottom: 10%;
+            width: min(450px, 80vw);
+            height: min(450px, 80vw);
+            background: #38bdf8;
+        }
+
+        a { color: inherit; text-decoration: none; }
+        button, input { font: inherit; }
+        button { -webkit-tap-highlight-color: transparent; }
+
+        .topbar {
+            width: min(1120px, calc(100% - 3rem));
+            height: 84px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.7rem;
+            font-size: 1.05rem;
+            font-weight: 800;
+            letter-spacing: -0.045em;
+        }
+
+        .brand-mark {
+            width: 34px;
+            height: 34px;
+            padding: 2px;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            border-radius: 11px;
+            background: #fff;
+            object-fit: cover;
+            box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+        }
+
+        .brand-text {
+            color: #1e40af;
+            background: linear-gradient(120deg, #1e40af 10%, #3b82f6 90%);
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.55rem;
+            padding: 0.6rem 0.8rem;
+            border-radius: 999px;
+            color: #475569;
+            font-size: 0.82rem;
+            font-weight: 600;
+            transition: color 180ms ease, background-color 180ms ease, transform 180ms ease;
+        }
+
+        .back-link:hover {
+            transform: translateX(-2px);
+            background: rgba(255, 255, 255, 0.72);
+            color: var(--primary);
+        }
+
+        .auth-wrap {
+            flex: 1;
+            display: grid;
+            place-items: center;
+            padding: 1.5rem;
+        }
+
+        .card {
+            width: min(900px, 100%);
+            display: grid;
+            grid-template-columns: 0.92fr 1.08fr;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.78);
+            box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.1);
+            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(16px);
+            animation: rise-in 550ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+        }
+
+        .welcome-panel {
+            position: relative;
+            isolation: isolate;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            padding: 2.25rem;
+            background:
+                radial-gradient(ellipse at 78% 24%, rgba(56, 189, 248, 0.72), transparent 34%),
+                linear-gradient(145deg, #10275c 0%, #1748a6 52%, #2563eb 100%);
+            color: #fff;
+        }
+
+        .welcome-panel::before,
+        .welcome-panel::after {
+            position: absolute;
+            z-index: -1;
+            content: "";
+            pointer-events: none;
+        }
+
+        .welcome-panel::before {
+            width: 360px;
+            height: 360px;
+            right: -170px;
+            top: 95px;
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            border-radius: 50%;
+            box-shadow: 0 0 0 28px rgba(255, 255, 255, 0.045), 0 0 0 58px rgba(255, 255, 255, 0.035);
+        }
+
+        .welcome-panel::after {
+            width: 290px;
+            height: 290px;
+            bottom: -180px;
+            left: -100px;
+            border-radius: 50%;
+            background: rgba(34, 211, 238, 0.34);
+            filter: blur(46px);
+        }
+
+        .panel-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            align-self: flex-start;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.92);
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.09em;
+            text-transform: uppercase;
+            backdrop-filter: blur(12px);
+        }
+
+        .panel-label i { color: #7dd3fc; }
+
+        .panel-copy {
+            position: relative;
+            z-index: 1;
+            margin: auto 0;
+            padding: 4.5rem 0 3rem;
+        }
+
+        .panel-copy h2 {
+            max-width: 340px;
+            margin: 0 0 1rem;
+            font-size: clamp(2rem, 3.8vw, 2.85rem);
+            line-height: 1.12;
+            letter-spacing: -0.06em;
+        }
+
+        .panel-copy p {
+            max-width: 330px;
+            margin: 0;
+            color: rgba(239, 246, 255, 0.82);
+            font-size: 0.94rem;
+            line-height: 1.8;
+        }
+
+        .panel-foot {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            color: rgba(239, 246, 255, 0.84);
+            font-size: 0.77rem;
+            font-weight: 500;
+        }
+
+        .panel-foot i {
+            display: grid;
+            width: 30px;
+            height: 30px;
+            place-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 9px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #bae6fd;
+        }
+
+        .form-panel {
+            align-self: center;
+            width: 100%;
+            max-width: 460px;
+            justify-self: center;
+            padding: 3.2rem clamp(2rem, 5vw, 4rem);
+            background: rgba(255, 255, 255, 0.38);
+        }
+
+        .header-text { margin-bottom: 2rem; }
+
+        .eyebrow {
+            margin: 0 0 0.75rem;
+            color: var(--primary);
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.13em;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 0 0 0.55rem;
+            color: #111827;
+            font-size: clamp(1.75rem, 3vw, 2.05rem);
+            font-weight: 800;
+            line-height: 1.2;
+            letter-spacing: -0.055em;
+        }
+
+        .subtext {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 0.87rem;
+            line-height: 1.65;
+        }
+
+        .form-group { margin-bottom: 1.2rem; }
+
+        .form-group > label {
+            display: block;
+            margin-bottom: 0.55rem;
+            color: #334155;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .input-wrap { position: relative; }
+
+        .input-wrap .icon-left {
+            position: absolute;
+            top: 50%;
+            left: 1rem;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 0.9rem;
+            pointer-events: none;
+            transition: color 180ms ease;
+        }
+
+        .input-wrap input:not([type="checkbox"]) {
+            width: 100%;
+            min-height: 49px;
+            padding: 0.8rem 2.85rem 0.8rem 2.75rem;
+            border: 1px solid #dbe3ee;
+            border-radius: var(--radius-sm);
+            outline: none;
+            background: #fbfdff;
+            color: var(--text-main);
+            font-size: 0.84rem;
+            transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+        }
+
+        .input-wrap input::placeholder { color: #a0aec0; }
+
+        .input-wrap input:hover { border-color: #b8c5d6; }
+
+        .input-wrap input:focus {
+            border-color: #60a5fa;
+            outline: none;
+            background: #fff;
+            box-shadow: 0 0 0 4px var(--border-focus);
+        }
+
+        .input-wrap:focus-within .icon-left { color: var(--primary); }
+
+        .toggle-password {
+            position: absolute;
+            top: 50%;
+            right: 0.65rem;
+            display: grid;
+            width: 34px;
+            height: 34px;
+            transform: translateY(-50%);
+            place-items: center;
+            border: 0;
+            border-radius: 8px;
+            background: transparent;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: background-color 180ms ease, color 180ms ease;
+        }
+
+        .toggle-password:hover {
+            background: #eff6ff;
+            color: var(--primary);
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin: 0.1rem 0 1.45rem;
+            font-size: 0.76rem;
+        }
+
+        .remember {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.55rem;
+            color: #64748b;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .remember input {
+            width: 16px;
+            height: 16px;
+            margin: 0;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .link {
+            padding: 0;
+            border: 0;
+            background: transparent;
+            color: var(--primary);
+            font-size: inherit;
+            font-weight: 700;
+            cursor: pointer;
+            transition: color 160ms ease;
+        }
+
+        .link:hover { color: var(--primary-dark); text-decoration: underline; }
+
+        .btn {
+            width: 100%;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.55rem;
+            padding: 0.85rem 1rem;
+            border: 0;
+            border-radius: var(--radius-sm);
+            font-size: 0.87rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(110deg, #2563eb, #1d4ed8);
+            color: #fff;
+            box-shadow: 0 8px 18px -8px rgba(37, 99, 235, 0.78);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-1px);
+            background: linear-gradient(110deg, #1d4ed8, #1e40af);
+            box-shadow: 0 12px 22px -9px rgba(37, 99, 235, 0.76);
+        }
+
+        .btn:disabled { opacity: 0.72; cursor: not-allowed; }
+
+        #auth-message {
+            display: none;
+            margin-top: 1rem;
+            padding: 0.75rem 0.85rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.78rem;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        #auth-message.error {
+            display: block;
+            border: 1px solid #fecaca;
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+
+        #auth-message.success {
+            display: block;
+            border: 1px solid #a7f3d0;
+            background: #ecfdf5;
+            color: #047857;
+        }
+
+        .alt {
+            margin-top: 1.55rem;
+            color: var(--text-muted);
+            font-size: 0.79rem;
+            text-align: center;
+        }
+
+        .alt a {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .alt a:hover { color: var(--primary-dark); text-decoration: underline; }
+
+        .footer {
+            width: min(1120px, calc(100% - 3rem));
+            min-height: 66px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin: 0 auto;
+            color: #64748b;
+            font-size: 0.72rem;
+        }
+
+        .footer a { transition: color 160ms ease; }
+        .footer a:hover { color: var(--primary); }
+
+        :focus-visible {
+            outline: 3px solid rgba(59, 130, 246, 0.55);
+            outline-offset: 3px;
+        }
+
+        .input-wrap input:focus-visible,
+        .remember input:focus-visible,
+        .btn:focus-visible,
+        .toggle-password:focus-visible,
+        .link:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 4px var(--border-focus);
+        }
+
+        @keyframes rise-in {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 720px) {
+            .topbar {
+                width: min(100% - 2rem, 500px);
+                height: 72px;
+            }
+
+            .auth-wrap {
+                align-items: start;
+                padding: 0.5rem 1rem 1.25rem;
+            }
+
+            .card {
+                width: min(100%, 480px);
+                grid-template-columns: 1fr;
+                border-radius: 1.15rem;
+            }
+
+            .welcome-panel {
+                min-height: auto;
+                padding: 1rem 1.45rem 1.05rem;
+            }
+
+            .panel-copy { margin: 0; padding: 0.75rem 0 0; }
+
+            .panel-copy h2 {
+                max-width: 400px;
+                margin-bottom: 0.45rem;
+                font-size: clamp(1.25rem, 5vw, 1.55rem);
+            }
+
+            .panel-copy p,
+            .panel-foot { display: none; }
+
+            .form-panel {
+                max-width: none;
+                padding: 1.65rem clamp(1.4rem, 7vw, 2.2rem) 1.75rem;
+                background: rgba(255, 255, 255, 0.38);
+            }
+
+            .header-text { margin-bottom: 1.3rem; }
+
+            .footer {
+                width: min(100% - 2rem, 500px);
+                min-height: 60px;
+                flex-direction: column;
+                justify-content: center;
+                gap: 0.45rem;
+                padding: 0.8rem 0 1rem;
+                text-align: center;
+            }
+
+        }
+
+        @media (max-width: 380px) {
+            .brand { font-size: 0.96rem; }
+            .back-link { padding-inline: 0.45rem; font-size: 0.76rem; }
+            .row { font-size: 0.72rem; }
+            .footer { font-size: 0.68rem; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                scroll-behavior: auto !important;
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow-container" aria-hidden="true">
+        <div class="glow-blob glow-1"></div>
+        <div class="glow-blob glow-2"></div>
+    </div>
+    <header class="topbar">
+        <a href="https://sitenexs.com/" class="brand" aria-label="Ke halaman utama Sitenexs">
+            <img src="https://sitenexs.com/assets/logo/logo.png" alt="" class="brand-mark" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Sitenexs&background=2563eb&color=fff&size=28&rounded=true';">
+            <span class="brand-text">Sitenexs</span>
+        </a>
+        <a href="https://sitenexs.com/" class="back-link">
+            <i class="fas fa-arrow-left" aria-hidden="true"></i>
+            <span>Kembali ke beranda</span>
+        </a>
+    </header>
+
+    <main class="auth-wrap">
+        <section class="card" aria-label="Masuk ke akun Sitenexs">
+            <aside class="welcome-panel">
+                <span class="panel-label"><i class="fas fa-sparkles" aria-hidden="true"></i> Ruang digital Anda</span>
+                <div class="panel-copy">
+                    <h2>Semua yang Anda butuhkan, di satu tempat.</h2>
+                    <p>Masuk ke akun Sitenexs dan lanjutkan mengelola aktivitas Anda dengan mudah dan aman.</p>
+                </div>
+                <div class="panel-foot">
+                    <i class="fas fa-shield-halved" aria-hidden="true"></i>
+                    <span>Akses akun yang aman dan nyaman</span>
+                </div>
+            </aside>
+
+            <div class="form-panel">
+                <div class="header-text">
+                    <p class="eyebrow">Selamat datang kembali</p>
+                    <h1>Masuk ke akun Anda</h1>
+                    <p class="subtext">Gunakan email dan password untuk melanjutkan.</p>
+                </div>
+
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="email">Alamat email</label>
+                        <div class="input-wrap">
+                            <i class="fas fa-envelope icon-left" aria-hidden="true"></i>
+                            <input id="email" type="email" autocomplete="email" placeholder="nama@email.com" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="input-wrap">
+                            <i class="fas fa-lock icon-left" aria-hidden="true"></i>
+                            <input id="password" type="password" autocomplete="current-password" placeholder="Masukkan password" required>
+                            <button type="button" class="toggle-password" id="togglePassword" aria-label="Tampilkan password">
+                                <i class="fas fa-eye" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <label class="remember">
+                            <input type="checkbox" id="rememberMe">
+                            Ingat saya
+                        </label>
+                        <button id="reset-password" type="button" class="link">Lupa password?</button>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <span id="btnText">Masuk</span>
+                    </button>
+                </form>
+
+                <div id="auth-message" role="status" aria-live="polite"></div>
+
+                <div class="alt">
+                    Belum punya akun? <a href="https://account.sitenexs.com/register/">Daftar di sini</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <span>&copy; 2026 Sitenexs. Hak cipta dilindungi.</span>
+        <span><i class="fas fa-shield-halved" aria-hidden="true"></i> Login aman dengan Firebase</span>
+    </footer>
+    
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js';
+        import {
+            browserLocalPersistence,
+            browserSessionPersistence,
+            getAuth,
+            onAuthStateChanged,
+            setPersistence,
+            signInWithEmailAndPassword,
+            sendPasswordResetEmail
+        } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js';
+
+        const firebaseConfig = {
+            apiKey: 'AIzaSyDuN4zlRaSnmcUSuXE_E84IE7d3Mz8E-N4',
+            authDomain: 'sitenexs-62919.firebaseapp.com',
+            projectId: 'sitenexs-62919',
+            storageBucket: 'sitenexs-62919.firebasestorage.app',
+            messagingSenderId: '1060348110644',
+            appId: '1:1060348110644:web:e45af14d5f26a9cf8e6761',
+            measurementId: 'G-C7YL0Q7YRQ'
+        };
+
+        const auth = getAuth(initializeApp(firebaseConfig));
+        const form = document.getElementById('login-form');
+        const message = document.getElementById('auth-message');
+        const submitButton = document.getElementById('submitBtn');
+        const btnText = document.getElementById('btnText');
+        const mainSiteOrigin = 'https://sitenexs.com';
+        
+        // Fitur Toggle Password (Mata)
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+
+        togglePassword.addEventListener('click', function () {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+        });
+
+        // Sinkronisasi Sesi
+        onAuthStateChanged(auth, (user) => {
+            if (window.parent !== window) {
+                window.parent.postMessage({
+                    type: 'sitenexs-auth-state',
+                    signedIn: Boolean(user)
+                }, mainSiteOrigin);
+            }
+        });
+
+        function showMessage(msg, type = 'error') {
+            message.textContent = msg;
+            message.className = type;
+        }
+
+            form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            message.className = '';
+            message.textContent = '';
+            submitButton.disabled = true;
+            btnText.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+            
+            try {
+                const persistence = document.getElementById('rememberMe').checked
+                    ? browserLocalPersistence
+                    : browserSessionPersistence;
+                
+                await setPersistence(auth, persistence);
+                
+                const userCredential = await signInWithEmailAndPassword(
+                    auth,
+                    document.getElementById('email').value.trim(),
+                    document.getElementById('password').value
+                );
+                
+                const user = userCredential.user;
+
+                // Simpan juga ke localStorage cadangan
+                localStorage.setItem('sitenexs_logged_in', 'true');
+                localStorage.setItem('sitenexs_uid', user.uid);
+                localStorage.setItem('sitenexs_show_welcome', 'true');
+
+                btnText.innerHTML = '<i class="fas fa-check"></i> Berhasil';
+                
+                // LEMPAR LANGSUNG KE INDEX.HTML DENGAN MEMBAWA PARAMETER WELCOME DAN UID
+                window.location.assign(`https://sitenexs.com/?welcome=true&uid=${user.uid}`);
+
+            } catch (error) {
+                const messages = {
+                    'auth/invalid-credential': 'Email atau password salah.',
+                    'auth/invalid-email': 'Masukkan alamat email yang valid.',
+                    'auth/too-many-requests': 'Terlalu banyak percobaan. Coba lagi nanti.',
+                    'auth/network-request-failed': 'Koneksi bermasalah. Periksa internet Anda.'
+                };
+                showMessage(messages[error.code] || 'Terjadi kesalahan saat masuk.', 'error');
+                
+                submitButton.disabled = false;
+                btnText.textContent = 'Masuk';
+            }
+        });
+
+
+
+        document.getElementById('reset-password').addEventListener('click', async () => {
+            const email = document.getElementById('email').value.trim();
+            if (!email) {
+                showMessage('Masukkan email Anda terlebih dahulu untuk reset password.', 'error');
+                document.getElementById('email').focus();
+                return;
+            }
+
+            try {
+                await sendPasswordResetEmail(auth, email);
+                showMessage('Tautan reset password telah dikirim ke email Anda.', 'success');
+            } catch (error) {
+                const messages = {
+                    'auth/invalid-email': 'Masukkan alamat email yang valid.',
+                    'auth/user-not-found': 'Email tidak terdaftar.',
+                };
+                showMessage(messages[error.code] || 'Gagal mengirim tautan reset.', 'error');
+            }
+        });
+    </script>
+</body>
+</html>
